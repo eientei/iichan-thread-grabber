@@ -2,6 +2,9 @@ package grabber
 
 import (
 	"context"
+	"crypto/md5"
+	"encoding/hex"
+	"github.com/eientei/iichan-thread-grabber/model"
 	"github.com/nfnt/resize"
 	"golang.org/x/net/html"
 	"image"
@@ -149,7 +152,9 @@ func (order *ThreadGrabOrder) Execute(ctx context.Context) (err error) {
 
 	stat := FileStat(outthreadfile)
 
+	update := false
 	if stat == nil || time.Now().Sub(stat.ModTime()) > ThreadCache {
+		update = true
 		resultchan := make(chan *DownloadingResult)
 
 		order.Grabber.DownloadingQueue.Submit(ctx, &DownloadingOrder{
@@ -241,11 +246,20 @@ func (order *ThreadGrabOrder) Execute(ctx context.Context) (err error) {
 		}
 	}
 
+	_, err = model.GetThread(order.Thread.Path)
+	if err != nil || update || len(fetches) > 0 {
+		err = model.CreateThread(order.Thread.Path)
+		if err != nil {
+			return err
+		}
+	}
+
+	now := time.Now()
 	for _, img := range images {
+		outimgfile := filepath.Join(outdir, path.Base(img.Full))
 		thumbimgfile := ThumbPath(outdir, img.Full)
 		thumbstat := FileStat(thumbimgfile)
-		if thumbstat == nil || time.Now().Sub(thumbstat.ModTime()) > ImageCache {
-			outimgfile := filepath.Join(outdir, path.Base(img.Full))
+		if thumbstat == nil || now.Sub(thumbstat.ModTime()) > ImageCache {
 			infile, err := os.OpenFile(outimgfile, os.O_RDONLY, 0644)
 			if err != nil {
 				return err
@@ -275,13 +289,48 @@ func (order *ThreadGrabOrder) Execute(ctx context.Context) (err error) {
 				return err
 			}
 		}
+		err = os.Chtimes(outimgfile, now, now)
+		if err != nil {
+			return err
+		}
+		err = os.Chtimes(thumbimgfile, now, now)
+		if err != nil {
+			return err
+		}
+
+		infile, err := os.OpenFile(outimgfile, os.O_RDONLY, 0644)
+		if err != nil {
+			return err
+		}
+		buf := make([]byte, 4096)
+		hash := md5.New()
+		for {
+			n, err := infile.Read(buf)
+			if err != nil && err != io.EOF {
+				return err
+			}
+			if n == 0 {
+				break
+			}
+			n, err = hash.Write(buf[:n])
+			if err != nil {
+				return err
+			}
+		}
+		_ = infile.Close()
+		md5hash := hash.Sum(nil)
+
+		err = model.CreateImage(order.Thread.Path, strings.ToLower(hex.EncodeToString(md5hash)), strings.TrimPrefix(outimgfile, order.OutputDir), strings.TrimPrefix(thumbimgfile, order.OutputDir))
+		if err != nil {
+			return err
+		}
 	}
 
 	if atomic.CompareAndSwapInt32(&order.Complete, 0, 1) {
 		order.OutputChunk <- &StatusMessage{
 			Status: "complete",
 			Data: &ReadyStatus{
-				Base: order.PublicBase + "/" + threadid,
+				Base: order.PublicBase + order.Thread.Path,
 			},
 		}
 		close(order.OutputChunk)

@@ -1,0 +1,18 @@
+{
+  "fetching": "Fetching...",
+  "unsorted_images": "Unsorted ({{count}} image)",
+  "unsorted_images_plural": "Unsorted ({{count}} images)",
+  "drag_here": "Drag image here into groups ({{count}} image)",
+  "drag_here_plural": "Drag image here into groups ({{count}} images)",
+  "save": "Save",
+  "next": "Next",
+  "back": "Back",
+  "md5": "Md5",
+  "rating": "Rating",
+  "rating_e": "Explicit",
+  "rating_q": "Questionable",
+  "rating_s": "Safe",
+  "parent_md5": "Parent md5",
+  "tags": "Tags",
+  "use_parent_order": "Use current order as parents"
+}

@@ -1,0 +1,41 @@
+{
+  "name": "iichan-thread-grabber",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@emotion/core": "^10.0.10",
+    "@emotion/css": "^10.0.9",
+    "@emotion/styled": "^10.0.11",
+    "dotenv": "^8.0.0",
+    "emotion-normalize": "^10.0.0",
+    "emotion-theming": "^10.0.10",
+    "next": "^8.1.0",
+    "next-i18next": "^0.40.1",
+    "next-redux-wrapper": "^3.0.0-alpha.2",
+    "react": "^16.8.6",
+    "react-dnd": "^7.4.5",
+    "react-dnd-html5-backend": "^7.4.4",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.0.3",
+    "redux": "^4.0.1",
+    "redux-actions": "^2.6.5",
+    "redux-logger": "^3.0.6",
+    "redux-saga": "^1.0.2"
+  },
+  "scripts": {
+    "dev": "node server.js",
+    "start": "NODE_ENV=production node server.js",
+    "build": "next build",
+    "export": "next export"
+  },
+  "devDependencies": {
+    "@babel/preset-flow": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-emotion": "^10.0.9",
+    "express": "^4.17.0",
+    "flow-bin": "^0.98.1",
+    "redux-devtools-extension": "^2.13.8"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "404_code": "404 - Page not found",
+  "403_code": "403 - Access forbidden",
+  "500_code": "500 - Internal server error",
+  "invalid_request": "Invalid request",
+  "server_error": "Server error",
+  "cancelled": "Cancelled"
+}

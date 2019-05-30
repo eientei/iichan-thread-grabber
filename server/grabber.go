@@ -75,6 +75,7 @@ type ProcessingThread struct {
 	Order       *grabber.ThreadGrabOrder
 	Subscribers []*ProcessingSubscriber
 	Mutex       *sync.Mutex
+	LastChunk   *grabber.StatusMessage
 }
 
 func SubmitThread(ctx context.Context, threadurl *url.URL, subscriber *ProcessingSubscriber) *ProcessingThread {
@@ -106,6 +107,9 @@ func SubmitThread(ctx context.Context, threadurl *url.URL, subscriber *Processin
 func (proc *ProcessingThread) Subscribe(subscriber *ProcessingSubscriber) {
 	proc.Mutex.Lock()
 	defer proc.Mutex.Unlock()
+	if proc.LastChunk != nil {
+		subscriber.Submit(proc.LastChunk)
+	}
 	proc.Subscribers = append(proc.Subscribers, subscriber)
 }
 
@@ -123,6 +127,7 @@ func (proc *ProcessingThread) Unsubscribe(subscriber *ProcessingSubscriber) {
 func (proc *ProcessingThread) Deliver() {
 	for status := range proc.Order.OutputChunk {
 		proc.Mutex.Lock()
+		proc.LastChunk = status
 		for _, sub := range proc.Subscribers {
 			go sub.Submit(status)
 		}
@@ -131,4 +136,5 @@ func (proc *ProcessingThread) Deliver() {
 	ProcessingMutex.Lock()
 	defer ProcessingMutex.Unlock()
 	delete(Processing, proc.Order.Thread.Path)
+	proc.LastChunk = nil
 }

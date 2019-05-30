@@ -1,0 +1,9 @@
+{
+  "input_thread_url": "Введите url треда:",
+  "thread_submitting": "Тред {{thread}} отправляется...",
+  "thread_submitting_error": "Ошибка при отправке треда: {{except}}",
+  "waiting": "Ожидание...",
+  "queue_progress": "Позиция в очереди: {{position}}",
+  "download_progress": "Загружается изображение: {{current}} из {{total}}",
+  "complete": "Завершено"
+}

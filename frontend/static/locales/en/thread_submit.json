@@ -1,0 +1,9 @@
+{
+  "input_thread_url": "Input thread url:",
+  "thread_submitting": "Thread {{thread}} is submitting...",
+  "thread_submitting_error": "Error submitting thread: {{except}}",
+  "waiting": "Waiting...",
+  "queue_progress": "Position in queue: {{position}}",
+  "download_progress": "Downloading image: {{current}} of {{total}}",
+  "complete": "Complete"
+}

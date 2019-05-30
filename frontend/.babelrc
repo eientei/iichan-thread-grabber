@@ -1,0 +1,4 @@
+{
+  "presets": ["@babel/react", "@babel/preset-flow"],
+  "plugins": ["emotion"]
+}

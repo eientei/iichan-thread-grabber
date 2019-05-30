@@ -2,6 +2,8 @@ package server
 
 import (
 	"github.com/eientei/iichan-thread-grabber/common"
+	"net/url"
+	"strings"
 	"time"
 )
 
@@ -11,6 +13,7 @@ var (
 	PublicBase       = common.EnvResolveString("PUBLIC_BASE", "http://"+ListenAddr)
 	CleanupOutputDir = common.EnvResolveDuration("CLEANUP_OUTPUT_DIR", time.Hour*24)
 	CleanupFactor    = common.EnvResolveInt("CLEANUP_FACTOR", 10)
+	MultipartLimit   = common.EnvResolveInt("MULTIPART_LIMIT", 1024*1024*10)
 )
 
 var (
@@ -25,3 +28,15 @@ var (
 	GrabberNotifyRate     = common.EnvResolveDuration("GRABBER_NOTIFY_RATE", time.Second)
 	GrabberExecuteRate    = common.EnvResolveDuration("GRABBER_EXECUTE_RATE", time.Second)
 )
+
+var (
+	PublicPrefix = ""
+)
+
+func init() {
+	u, err := url.Parse(PublicBase)
+	if err != nil {
+		panic(err)
+	}
+	PublicPrefix = strings.TrimSuffix(u.Path, "/")
+}

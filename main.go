@@ -1,3 +1,4 @@
+//go:generate go generate ./model
 package main
 
 import (
@@ -6,6 +7,6 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/", server.Handler)
+	http.HandleFunc(server.PublicPrefix+"/", server.Handler)
 	_ = http.ListenAndServe(server.ListenAddr, nil)
 }

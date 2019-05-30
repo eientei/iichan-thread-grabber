@@ -84,7 +84,7 @@ func (order *DownloadingOrder) Execute(ctx context.Context) (err error) {
 	if err != nil {
 		return
 	}
-	if n != resp.ContentLength {
+	if resp.ContentLength > 0 && n != resp.ContentLength {
 		if atomic.CompareAndSwapInt32(&order.Complete, 0, 1) {
 			order.Result <- &DownloadingResult{
 				Error: ErrStatus,
